@@ -1,17 +1,17 @@
 # Sec-price
-##Name the data as *montly_sec_only*
+## Name the data as *montly_sec_only*
 
 # Q1
 #Check the missing value
-sum(is.na(c(monthly_sec_only$Partyname, monthly_sec_only$Bmunit)))
+        sum(is.na(c(monthly_sec_only$Partyname, monthly_sec_only$Bmunit)))
 
 #Import functions
-library(dplyr)
-library(tidyr)
-library(reshape2)
-library(fBasics)
-library(stats)
-library(car)
+        library(dplyr)
+        library(tidyr)
+        library(reshape2)
+        library(fBasics)
+        library(stats)
+        library(car)
 
 #Kick out the duplicate data
         t <- select(monthly_sec_only, Partyname, Bmunit)
