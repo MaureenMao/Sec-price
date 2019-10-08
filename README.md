@@ -2,10 +2,10 @@
 #Name the data as *montly_sec_only*
 
 # Q1
-Check the missing value
+## Check the missing value
         sum(is.na(c(monthly_sec_only$Partyname, monthly_sec_only$Bmunit)))
 
-Import functions
+## Import functions
         library(dplyr)
         library(tidyr)
         library(reshape2)
@@ -13,22 +13,22 @@ Import functions
         library(stats)
         library(car)
 
-#Kick out the duplicate data
+## Kick out the duplicate data
         t <- select(monthly_sec_only, Partyname, Bmunit)
         t1 <- t[!duplicated(t),]
         
-#Arrange and sort
+## Arrange and sort
         arrange(t1, Partyname)
         num <- table(t1$Partyname)
         sort(num, decreasing=TRUE)
         
-#Maximum is the first one in the list, "E.ON UK plc 21"
+## Maximum is the first one in the list, "E.ON UK plc 21"
 
 # Q2
         p <- data.frame(monthly_sec_only$Month , monthly_sec_only$B_Sec, monthly_sec_only$Sec_Mwh, stringsAsFactors = FALSE)
         p <- arrange(p, monthly_sec_only$Month)
 
-##Check NAs
+## Check NAs
         p0 <- na.omit(p)
         dim(p)
         dim(p0)
@@ -36,9 +36,9 @@ Import functions
         list <- which(rowSums(is.na(p)) !=0)
         p_na <- p[list, ]
         p_na
-##In this case we simply wipe NAs out because the missing data has little influence on the result
+## In this case we simply wipe NAs out because the missing data has little influence on the result
 
-##Define the montly price
+## Define the montly price
         names(p0)
         p0 <- rename (p0, Month = "monthly_sec_only.Month", Bid = "monthly_sec_only.B_Sec", Volume = "monthly_sec_only.Sec_Mwh")
         names(p0)
@@ -46,7 +46,7 @@ Import functions
         s <- sum(p0[ ,2])
         sec_price <- summarize(Month, secprice = sum(Bid * Volume / s))
 
-##Create a time series data
+## Create a time series data
         price <- ts(sec_price$secprice, frequency = 12 , start = c(2005,11))
         plot(price, xlab = 'Year', ylab = '(Secondary)Volume Weighted Average Price', main = 'Monthly Price Line', type = 'l')
 
@@ -60,37 +60,38 @@ Import functions
         input_prices <- coal_gas_prices[ ,3:5]
         head(input_prices)
 
-#Merge the data to a dataset
-#Modify the length of second price to the length of quarterly data in the sheet called "Sec"
+## Merge the data to a dataset
+## Modify the length of second price to the length of quarterly data in the sheet called "Sec"
 
         sec <- read_excel("D:/JHU/Career/1/coal_gas_prices.xls", sheet = "Sec")
 
-#Create join variable "qt"
+## Create join variable "qt"
         sec$qt <- rep(1:16, each = 3)
         input_prices$qt <- rownames(input_prices)
 
         sec3 <- merge(sec, input_prices)
         sec3 <- select(sec3,secprice:Gas)
         sec3 <- sec3[-1, ]
-        #Check the merged dataset
+        
+## Check the merged dataset
         head(sec3)
         View(sec_price)
 
-#Calling lm
+## Calling lm
         fit <- lm (secprice ~ . , data=sec3)
         summary (fit) $coefficient
 
-##Interpretation
+## Interpretation
 #R-square equals to 0.1195 and adjusted R-square equals to 0.05804, which is acceptable
 #The probility tells us that the price of caol, oil and gas all have significant statistical impacts on the level of 5%
 #Which means a $0.5 decrease in the coal price would lead to a $1 rise in the second price; a $0.03, $0.1 increase in the oil and gas price could lead to a $1 rise in the second price 
 
-#Verify the multicollinearity
+## Verify the multicollinearity
         vif(fit)
 #VIf less than 10, which means there is no multicollinearity
 
-#From the analysis, we can conclude that although oil price has a little impact on the second price, caol price could have an adverse impact.
-#So in order to analysis the second price of the plants, we should also pay close attention to the price of the coal market.
+## From the analysis, we can conclude that although oil price has a little impact on the second price, caol price could have an adverse impact.
+## So in order to analysis the second price of the plants, we should also pay close attention to the price of the coal market.
 
 
 
