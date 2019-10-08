@@ -1,11 +1,11 @@
 ## Sec-price
 #Name the data as *montly_sec_only*
 
-## Q1
-# Check the missing value
+# Q1
+Check the missing value
         sum(is.na(c(monthly_sec_only$Partyname, monthly_sec_only$Bmunit)))
 
-# Import functions
+Import functions
         library(dplyr)
         library(tidyr)
         library(reshape2)
